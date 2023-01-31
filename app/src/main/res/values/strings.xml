@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Contacts</string>
+    <string name="filter_show_all">All</string>
+    <string name="filter_age">Age</string>
+    <string name="name">NAME</string>
+    <string name="image">image</string>
+    <string name="id_preview">Id:</string>
+    <string name="contact_id">CONTACT_ID</string>
+    <string name="age_preview">Age:</string>
+    <string name="age">AGE</string>
+    <string name="email_preview">Email:</string>
+    <string name="email">EMAIL</string>
+    <string name="phone_preview">Phone:</string>
+    <string name="phone">PHONE</string>
+    <string name="ip_preview">Ip:</string>
+    <string name="ip">IP</string>
+    <string name="search_contact">Search Contact</string>
+</resources>
