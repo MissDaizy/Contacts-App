@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.RadioGroup;
 import android.widget.SearchView;
 
 import com.diana_ukrainsky.contacts.R;
@@ -24,6 +25,7 @@ import com.diana_ukrainsky.contacts.ui.contact_details.ContactDetailsViewModel;
 import com.diana_ukrainsky.contacts.ui.contact_details.activity.ContactDetailsActivity;
 import com.diana_ukrainsky.contacts.ui.contact_list.ContactListEvent;
 import com.diana_ukrainsky.contacts.ui.contact_list.FilterType;
+import com.diana_ukrainsky.contacts.ui.contact_list.SortType;
 import com.diana_ukrainsky.contacts.ui.contact_list.adapter.ContactListAdapter;
 import com.google.gson.Gson;
 
@@ -44,7 +46,7 @@ public class ContactListActivity extends AppCompatActivity implements LifecycleO
         setContentView(R.layout.activity_contact_list);
 
         activityContactListBinding = ActivityContactListBinding.inflate(getLayoutInflater());
-        View view= activityContactListBinding.getRoot();
+        View view = activityContactListBinding.getRoot();
         setContentView(view);
 
         setViewModels();
@@ -58,7 +60,10 @@ public class ContactListActivity extends AppCompatActivity implements LifecycleO
     }
 
     private void setViews() {
-        progressBar=activityContactListBinding.activityContactListPBProgressBar;
+        progressBar = activityContactListBinding.activityContactListPBProgressBar;
+        // Set the default sort direction to ascending
+        activityContactListBinding.radioAscending.setChecked(true);
+        activityContactListBinding.radioAll.setChecked(true);
     }
 
     private void setViewModels() {
@@ -82,7 +87,7 @@ public class ContactListActivity extends AppCompatActivity implements LifecycleO
         contactListViewModel.getCurrentSearchTextLiveData().observe(this, new Observer<String>() {
             @Override
             public void onChanged(String searchText) {
-                activityContactListBinding.activityContactListSVSearchView.setQuery(searchText,false);
+                activityContactListBinding.activityContactListSVSearchView.setQuery(searchText, false);
             }
         });
         // TODO: CONTACT DETAILS OBSERVE
@@ -96,7 +101,7 @@ public class ContactListActivity extends AppCompatActivity implements LifecycleO
         contactListViewModel.getLoading().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean isLoading) {
-                if(isLoading)
+                if (isLoading)
                     progressBar.setVisibility(View.VISIBLE);
                 else
                     progressBar.setVisibility(View.INVISIBLE);
@@ -104,20 +109,9 @@ public class ContactListActivity extends AppCompatActivity implements LifecycleO
         });
     }
 
-    private void startContactDetailsActivity() {
-        String selectedItemJson = new Gson().toJson (contactDetailsViewModel.getSelectedItem().getValue());
-        String itemDetailsJson = new Gson().toJson (contactDetailsViewModel.getContactDetailsLiveData().getValue());
-        Intent intent = new Intent(this, ContactDetailsActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        Bundle bundle = new Bundle ();
-        bundle.putString(Constants.SELECTED_ITEM,selectedItemJson);
-        bundle.putString(Constants.ITEM_DETAILS,itemDetailsJson);
-        intent.putExtras(bundle);
-        startActivity(intent);
-    }
-
     private void setListeners() {
-        setFilterButtonsListeners();
+        setRadioButtonsListener();
+        setRadioButtonsSortParameterListener();
         activityContactListBinding.activityContactListSVSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -126,26 +120,76 @@ public class ContactListActivity extends AppCompatActivity implements LifecycleO
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                contactListViewModel.onEventMenuItemList(ContactListEvent.SEARCH,newText);
+                contactListViewModel.onEventMenuItemList(ContactListEvent.SEARCH, newText);
                 return true;
             }
         });
 
     }
 
-    private void setFilterButtonsListeners() {
-        activityContactListBinding.activityContactListBTNAllFilter.setOnClickListener(v -> {
-            contactListViewModel.onEventMenuItemList(ContactListEvent.FILTER_LIST, FilterType.ALL);
+    private void setRadioButtonsSortParameterListener() {
+        activityContactListBinding.radiogroupSortParameter.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+// Handle the change in the radio button state
+                switch (checkedId) {
+                    case R.id.radio_all:
+                        // Sort the list of movies in ascending order
+                        contactListViewModel.onEventMenuItemList(ContactListEvent.FILTER_LIST, FilterType.ALL);
+
+                        break;
+                    case R.id.radio_id:
+                        // Sort the list of movies in descending order
+                        contactListViewModel.onEventMenuItemList(ContactListEvent.FILTER_LIST, FilterType.ID);
+                        break;
+                    case R.id.radio_name:
+                        // Sort the list of movies in descending order
+                        contactListViewModel.onEventMenuItemList(ContactListEvent.FILTER_LIST, FilterType.NAME);
+
+                        break;
+                    case R.id.radio_Age:
+                        // Sort the list of movies in descending order
+                        contactListViewModel.onEventMenuItemList(ContactListEvent.FILTER_LIST, FilterType.AGE);
+                        break;
+                }
+            }
         });
-        activityContactListBinding.activityContactListBTNAscAgeFilter.setOnClickListener(v -> {
-            contactListViewModel.onEventMenuItemList(ContactListEvent.FILTER_LIST,FilterType.ASC_AGE);
+    }
+
+    private void setRadioButtonsListener() {
+        activityContactListBinding.radiogroupSort.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+// Handle the change in the radio button state
+                switch (checkedId) {
+                    case R.id.radio_ascending:
+                        // Sort the list of movies in ascending order
+                        contactListViewModel.onEventMenuItemList(ContactListEvent.FILTER_LIST, SortType.ASC);
+
+
+                        break;
+                    case R.id.radio_descending:
+                        // Sort the list of movies in descending order
+                        contactListViewModel.onEventMenuItemList(ContactListEvent.FILTER_LIST, SortType.DESC);
+
+                        break;
+                }
+            }
         });
-        activityContactListBinding.activityContactListBTNDescAgeFilter.setOnClickListener(v -> {
-            contactListViewModel.onEventMenuItemList(ContactListEvent.FILTER_LIST,FilterType.DESC_AGE);
-        });
-        activityContactListBinding.activityContactListBTNNameFilter.setOnClickListener(v -> {
-            contactListViewModel.onEventMenuItemList(ContactListEvent.FILTER_LIST,FilterType.NAME);
-        });
+
+    }
+
+
+    private void startContactDetailsActivity() {
+        String selectedItemJson = new Gson().toJson(contactDetailsViewModel.getSelectedItem().getValue());
+        String itemDetailsJson = new Gson().toJson(contactDetailsViewModel.getContactDetailsLiveData().getValue());
+        Intent intent = new Intent(this, ContactDetailsActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constants.SELECTED_ITEM, selectedItemJson);
+        bundle.putString(Constants.ITEM_DETAILS, itemDetailsJson);
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 
     private void setRecyclerView() {

@@ -11,6 +11,7 @@ import com.diana_ukrainsky.contacts.data.model.ContactList;
 import com.diana_ukrainsky.contacts.repository.Repository;
 import com.diana_ukrainsky.contacts.ui.contact_list.ContactListEvent;
 import com.diana_ukrainsky.contacts.ui.contact_list.FilterType;
+import com.diana_ukrainsky.contacts.ui.contact_list.SortType;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,6 +37,7 @@ public class ContactListViewModel extends ViewModel {
     private CompositeDisposable disposables;
     private Repository repository;
     private FilterType selectedFilter;
+    private SortType selectedSort;
 
 
     public ContactListViewModel() {
@@ -54,6 +56,7 @@ public class ContactListViewModel extends ViewModel {
         contactListSubject = PublishSubject.create();
         disposables = new CompositeDisposable();
         selectedFilter = FilterType.ALL;
+        selectedSort=SortType.ASC;
     }
 
     private void subscribeSubject() {
@@ -126,7 +129,10 @@ public class ContactListViewModel extends ViewModel {
             //TODO: FILTER
 
             case FILTER_LIST: {
-                selectedFilter = (FilterType) object;
+                if(object instanceof FilterType)
+                  selectedFilter = (FilterType) object;
+                else if(object instanceof SortType)
+                    selectedSort = (SortType)object;
                 filterList();
                 break;
             }
@@ -160,17 +166,29 @@ public class ContactListViewModel extends ViewModel {
                 filteredContacts =contactListLiveData.getValue();
                 break;
 
-            case ASC_AGE:
-                Collections.sort(filteredContacts,  new Contact.SortByAge().reversed());
+            case AGE:
+                if(selectedSort.equals(SortType.ASC))
+                    Collections.sort(filteredContacts,  new Contact.SortByAge());
+                else
+                    Collections.sort(filteredContacts, new Contact.SortByAge().reversed());
+
                 break;
 
-            case DESC_AGE:
-                Collections.sort(filteredContacts, new Contact.SortByAge());
+            case ID:
+                if(selectedSort.equals(SortType.ASC))
+                    Collections.sort(filteredContacts, new Contact.SortById());
+                else
+                    Collections.sort(filteredContacts, new Contact.SortById().reversed());
+
                 break;
 
 
             case NAME:
-                Collections.sort(filteredContacts, new Contact.SortByName());
+                if(selectedSort.equals(SortType.ASC))
+                    Collections.sort(filteredContacts, new Contact.SortByName());
+                else
+                    Collections.sort(filteredContacts, new Contact.SortByName().reversed());
+
                 break;
 
         }

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -32,56 +31,102 @@
                 android:padding="5dp"
                 android:textColor="@color/black"
                 android:textColorHint="@color/black"
-                android:textSize="16sp"/>
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:text="Filter By:"
+                android:textSize="18sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
+                android:layout_margin="5dp"
+                android:gravity="center|start"
                 android:orientation="horizontal">
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/activityContactList_BTN_allFilter"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Parameter:" />
+
+                <RadioGroup
+                    android:id="@+id/radiogroup_sortParameter"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/radio_all"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="All" />
+
+                    <RadioButton
+                        android:id="@+id/radio_id"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Id" />
+
+                    <RadioButton
+                        android:id="@+id/radio_name"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Name" />
+
+                    <RadioButton
+                        android:id="@+id/radio_Age"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Age" />
+                </RadioGroup>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:orientation="horizontal">
+
+                <TextView
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:text="@string/filter_show_all"
-                    android:textSize="10sp" />
+                    android:gravity="center|start"
+                    android:text="Asc/Desc:" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/activityContactList_BTN_ascAgeFilter"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+                <RadioGroup
+                    android:id="@+id/radiogroup_sort"
                     android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="2"
-                    android:fontFamily="sans-serif"
-                    android:text="@string/filter_age"
-                    android:textSize="10sp"
-                    app:icon="@drawable/ic_arrow_upward" />
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:orientation="horizontal">
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/activityContactList_BTN_descAgeFilter"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="2"
-                    android:fontFamily="sans-serif"
-                    android:text="@string/filter_age"
-                    android:textSize="10sp"
-                    app:icon="@drawable/ic_arrow_downward" />
+                    <RadioButton
+                        android:id="@+id/radio_ascending"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Ascending" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/activityContactList_BTN_nameFilter"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:fontFamily="sans-serif"
-                    android:text="@string/name"
-                    android:textSize="10sp" />
+                    <RadioButton
+                        android:id="@+id/radio_descending"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Desc" />
+                </RadioGroup>
 
             </LinearLayout>
+
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/activityContactList_RV_recyclerView"
@@ -97,6 +142,7 @@
                 android:layout_gravity="center"
                 android:layout_margin="100dp" />
         </LinearLayout>
+
 
     </LinearLayout>
 </LinearLayout>

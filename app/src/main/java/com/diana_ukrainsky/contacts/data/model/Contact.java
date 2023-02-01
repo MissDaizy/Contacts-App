@@ -128,5 +128,10 @@ public class Contact {
             return c1.getAge() - c2.getAge();
         }
     }
-
+    public static class SortById implements Comparator<Contact> {
+        // Used for sorting title
+        public int compare(Contact c1, Contact c2) {
+            return c1.getId()-(c2.getId());
+        }
+    }
 }
