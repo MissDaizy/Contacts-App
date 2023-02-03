@@ -724,12 +724,12 @@ public class ContactDiffCallback extends DiffUtil.Callback {
 
     @Override
     public int getOldListSize() {
-        return mOldContactList.size();
+        return mOldContactList==null?0:mOldContactList.size();
     }
 
     @Override
     public int getNewListSize() {
-        return mNewContactList.size();
+        return mOldContactList==null?0:mNewContactList.size();
     }
 
     @Override
@@ -751,6 +751,7 @@ public class ContactDiffCallback extends DiffUtil.Callback {
         return super.getChangePayload(oldItemPosition, newItemPosition);
     }
 }
+
 
 ```
 
