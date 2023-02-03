@@ -558,12 +558,16 @@ Be aware of the Types!!!
     }
 
     @Override
-    public boolean equals(@Nullable Object obj) {
-        if(obj!=null) {
-            Contact contact=(Contact) obj;
-            return id==contact.getId();
-        }
-        return false;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Contact contact = (Contact) o;
+        return id == contact.id && age == contact.age && firstName.equals(contact.firstName) && lastName.equals(contact.lastName) && email.equals(contact.email) && phone.equals(contact.phone) && ip.equals(contact.ip) && image.equals(contact.image);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, firstName, lastName, age, email, phone, ip, image);
     }
 
     public static class SortByName implements Comparator<Contact> {
@@ -730,7 +734,7 @@ public class ContactDiffCallback extends DiffUtil.Callback {
 
     @Override
     public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-        return mOldContactList.get(oldItemPosition).equals(mNewContactList.get(newItemPosition));
+        return mOldContactList.get(oldItemPosition).getId()==(mNewContactList.get(newItemPosition).getId());
     }
 
     @Override
@@ -747,7 +751,6 @@ public class ContactDiffCallback extends DiffUtil.Callback {
         return super.getChangePayload(oldItemPosition, newItemPosition);
     }
 }
-
 
 ```
 

@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Comparator;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 public class Contact {
@@ -106,13 +107,27 @@ public class Contact {
                 .filter(x -> x != null && !x.isEmpty())
                 .collect(joining(" "));
     }
+//    @Override
+//    public boolean equals(@Nullable Object obj) {
+//        if(obj!=null) {
+//            Contact contact=(Contact) obj;
+//            return id==contact.getId();
+//        }
+//        return false;
+//    }
+
+
     @Override
-    public boolean equals(@Nullable Object obj) {
-        if(obj!=null) {
-            Contact contact=(Contact) obj;
-            return id==contact.getId();
-        }
-        return false;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Contact contact = (Contact) o;
+        return id == contact.id && age == contact.age && firstName.equals(contact.firstName) && lastName.equals(contact.lastName) && email.equals(contact.email) && phone.equals(contact.phone) && ip.equals(contact.ip) && image.equals(contact.image);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, firstName, lastName, age, email, phone, ip, image);
     }
 
     public static class SortByName implements Comparator<Contact> {

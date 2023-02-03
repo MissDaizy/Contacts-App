@@ -29,7 +29,7 @@ public class ContactDiffCallback extends DiffUtil.Callback {
 
     @Override
     public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-        return mOldContactList.get(oldItemPosition).equals(mNewContactList.get(newItemPosition));
+        return mOldContactList.get(oldItemPosition).getId()==(mNewContactList.get(newItemPosition).getId());
     }
 
     @Override
