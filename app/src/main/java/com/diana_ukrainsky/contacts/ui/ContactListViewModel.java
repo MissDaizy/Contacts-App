@@ -33,7 +33,6 @@ public class ContactListViewModel extends ViewModel {
     // Variable for hiding and showing the loading spinner
     private MutableLiveData<Boolean> loading;
     private MutableLiveData<String> currentSearchTextLiveData;
-    private PublishSubject<ContactList> contactListSubject;
     private CompositeDisposable disposables;
     private Repository repository;
     private FilterType selectedFilter;
@@ -44,7 +43,6 @@ public class ContactListViewModel extends ViewModel {
         this.repository = Repository.getInstance();
 
         init();
-        subscribeSubject();
     }
 
     private void init() {
@@ -53,22 +51,10 @@ public class ContactListViewModel extends ViewModel {
         loading = new MutableLiveData<>();
         currentSearchTextLiveData = new MutableLiveData<>("");
 
-        contactListSubject = PublishSubject.create();
         disposables = new CompositeDisposable();
         selectedFilter = FilterType.ALL;
         selectedSort=SortType.ASC;
     }
-
-    private void subscribeSubject() {
-        Disposable disposable =
-                repository.getAllContacts()
-                        .subscribeOn(Schedulers.io())
-                        .subscribe(contactListSubject::onNext, throwable -> {
-                            Log.e(Constants.LOG, "From SubscribeSubject error: " + throwable.getMessage());
-                        });
-        disposables.add(disposable);
-    }
-
     public MutableLiveData<List<Contact>> getContactListLiveData() {
         return contactListLiveData;
     }
@@ -86,7 +72,7 @@ public class ContactListViewModel extends ViewModel {
     }
 
     public void getContacts() {
-        contactListSubject
+        repository.getAllContacts()
                 .debounce(400, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())

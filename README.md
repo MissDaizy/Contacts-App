@@ -859,7 +859,6 @@ public class ContactListViewModel extends ViewModel {
     // Variable for hiding and showing the loading spinner
     private MutableLiveData<Boolean> loading;
     private MutableLiveData<String> currentSearchTextLiveData;
-    private PublishSubject<ContactList> contactListSubject;
     private CompositeDisposable disposables;
     private Repository repository;
     private FilterType selectedFilter;
@@ -870,7 +869,6 @@ public class ContactListViewModel extends ViewModel {
         this.repository = Repository.getInstance();
 
         init();
-        subscribeSubject();
     }
 
     private void init() {
@@ -879,22 +877,10 @@ public class ContactListViewModel extends ViewModel {
         loading = new MutableLiveData<>();
         currentSearchTextLiveData = new MutableLiveData<>("");
 
-        contactListSubject = PublishSubject.create();
         disposables = new CompositeDisposable();
         selectedFilter = FilterType.ALL;
         selectedSort=SortType.ASC;
     }
-
-    private void subscribeSubject() {
-        Disposable disposable =
-                repository.getAllContacts()
-                        .subscribeOn(Schedulers.io())
-                        .subscribe(contactListSubject::onNext, throwable -> {
-                            Log.e(Constants.LOG, "From SubscribeSubject error: " + throwable.getMessage());
-                        });
-        disposables.add(disposable);
-    }
-
     public MutableLiveData<List<Contact>> getContactListLiveData() {
         return contactListLiveData;
     }
@@ -912,7 +898,7 @@ public class ContactListViewModel extends ViewModel {
     }
 
     public void getContacts() {
-        contactListSubject
+        repository.getAllContacts()
                 .debounce(400, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
@@ -1250,7 +1236,7 @@ public enum ContactDetailsEvent {
 
 ```
 
-Step 19 - Create *ui* -> *object_details* -> **ObjectItemViewModel**:
+Step 19 - Create *ui* -> *object_details* -> **ObjectDetailsViewModel**:
 
 ```java harmony
 public class ContactDetailsViewModel extends ViewModel {
@@ -1258,9 +1244,6 @@ public class ContactDetailsViewModel extends ViewModel {
     private MutableLiveData<Contact> selectedItem;
     private Repository repository;
     private CompositeDisposable disposables;
-    private PublishSubject<Contact> contactDetailsSubject;
-
-
 
     public ContactDetailsViewModel( ) {
         this.repository = Repository.getInstance();
@@ -1273,19 +1256,6 @@ public class ContactDetailsViewModel extends ViewModel {
         contactDetailsLiveData = new MutableLiveData<>();
         selectedItem = new MutableLiveData<>();
         disposables = new CompositeDisposable();
-
-        contactDetailsSubject = PublishSubject.create();
-    }
-
-    public void subscribeSubject(String id) {
-        Disposable disposable =
-                repository.getContactDetails(id)
-                        .subscribeOn(Schedulers.io())
-                        .subscribe(contactDetailsSubject::onNext, throwable -> {
-                            Log.e(Constants.LOG, "subscribeSubject error: " + throwable.getMessage());
-                        });
-        disposables.add(disposable);
-
     }
 
     public MutableLiveData<Contact> getContactDetailsLiveData() {
@@ -1296,8 +1266,8 @@ public class ContactDetailsViewModel extends ViewModel {
         return selectedItem;
     }
 
-    public void getMenuItemDetails() {
-        contactDetailsSubject
+    public void getMenuItemDetails(String id) {
+        repository.getContactDetails(id)
                 .debounce(400, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
@@ -1333,14 +1303,14 @@ public class ContactDetailsViewModel extends ViewModel {
             case GET_CONTACT_DETAILS:
                 Contact contact = (Contact) object;
                 selectedItem.setValue(contact);
-                subscribeSubject(String.valueOf(contact.getId()));
-                getMenuItemDetails();
+                getMenuItemDetails(String.valueOf(contact.getId()));
                 break;
 
         }
 
     }
 }
+
 
 ```
 

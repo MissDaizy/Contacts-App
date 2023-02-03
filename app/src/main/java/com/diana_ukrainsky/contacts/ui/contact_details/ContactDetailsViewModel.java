@@ -24,9 +24,6 @@ public class ContactDetailsViewModel extends ViewModel {
     private MutableLiveData<Contact> selectedItem;
     private Repository repository;
     private CompositeDisposable disposables;
-    private PublishSubject<Contact> contactDetailsSubject;
-
-
 
     public ContactDetailsViewModel( ) {
         this.repository = Repository.getInstance();
@@ -39,19 +36,6 @@ public class ContactDetailsViewModel extends ViewModel {
         contactDetailsLiveData = new MutableLiveData<>();
         selectedItem = new MutableLiveData<>();
         disposables = new CompositeDisposable();
-
-        contactDetailsSubject = PublishSubject.create();
-    }
-
-    public void subscribeSubject(String id) {
-        Disposable disposable =
-                repository.getContactDetails(id)
-                        .subscribeOn(Schedulers.io())
-                        .subscribe(contactDetailsSubject::onNext, throwable -> {
-                            Log.e(Constants.LOG, "subscribeSubject error: " + throwable.getMessage());
-                        });
-        disposables.add(disposable);
-
     }
 
     public MutableLiveData<Contact> getContactDetailsLiveData() {
@@ -62,8 +46,8 @@ public class ContactDetailsViewModel extends ViewModel {
         return selectedItem;
     }
 
-    public void getMenuItemDetails() {
-        contactDetailsSubject
+    public void getMenuItemDetails(String id) {
+        repository.getContactDetails(id)
                 .debounce(400, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
@@ -99,8 +83,7 @@ public class ContactDetailsViewModel extends ViewModel {
             case GET_CONTACT_DETAILS:
                 Contact contact = (Contact) object;
                 selectedItem.setValue(contact);
-                subscribeSubject(String.valueOf(contact.getId()));
-                getMenuItemDetails();
+                getMenuItemDetails(String.valueOf(contact.getId()));
                 break;
 
         }
