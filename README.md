@@ -155,7 +155,8 @@ step 6 -
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Parameter:" />
+                    android:text="Parameter:"
+                    android:textSize="12sp" />
 
                 <RadioGroup
                     android:id="@+id/radiogroup_sortParameter"
@@ -169,28 +170,32 @@ step 6 -
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="All" />
+                        android:text="All"
+                        android:textSize="12sp" />
 
                     <RadioButton
                         android:id="@+id/radio_id"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Id" />
+                        android:text="Id"
+                        android:textSize="12sp" />
 
                     <RadioButton
                         android:id="@+id/radio_name"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Name" />
+                        android:text="Name"
+                        android:textSize="12sp" />
 
                     <RadioButton
                         android:id="@+id/radio_Age"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Age" />
+                        android:text="Age"
+                        android:textSize="12sp" />
                 </RadioGroup>
             </LinearLayout>
 
@@ -205,7 +210,8 @@ step 6 -
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:gravity="center|start"
-                    android:text="Asc/Desc:" />
+                    android:text="Asc/Desc:"
+                    android:textSize="12sp" />
 
                 <RadioGroup
                     android:id="@+id/radiogroup_sort"
@@ -219,14 +225,16 @@ step 6 -
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Ascending" />
+                        android:text="Ascending"
+                        android:textSize="12sp" />
 
                     <RadioButton
                         android:id="@+id/radio_descending"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Desc" />
+                        android:text="Desc"
+                        android:textSize="12sp" />
                 </RadioGroup>
 
             </LinearLayout>
@@ -954,6 +962,7 @@ public class ContactListViewModel extends ViewModel {
             }
             case SEARCH: {
                 String searchQuery=(String)object;
+                currentSearchTextLiveData.setValue(searchQuery);
                 searchMenuItems(searchQuery.toLowerCase());
                 filterList();
                 break;
@@ -1013,7 +1022,6 @@ public class ContactListViewModel extends ViewModel {
 // TODO: SEARCH 2
 
     public void searchMenuItems(String searchQuery) {
-        currentSearchTextLiveData.setValue(searchQuery);
         List<Contact> filteredMenuItems = new ArrayList<>();
         if (!allContactsList.isEmpty()) {
             for (Contact menuItem : allContactsList) {

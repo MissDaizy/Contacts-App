@@ -124,6 +124,7 @@ public class ContactListViewModel extends ViewModel {
             }
             case SEARCH: {
                 String searchQuery=(String)object;
+                currentSearchTextLiveData.setValue(searchQuery);
                 searchMenuItems(searchQuery.toLowerCase());
                 filterList();
                 break;
@@ -183,7 +184,6 @@ public class ContactListViewModel extends ViewModel {
 // TODO: SEARCH 2
 
     public void searchMenuItems(String searchQuery) {
-        currentSearchTextLiveData.setValue(searchQuery);
         List<Contact> filteredMenuItems = new ArrayList<>();
         if (!allContactsList.isEmpty()) {
             for (Contact menuItem : allContactsList) {
