@@ -28,7 +28,7 @@ import io.reactivex.rxjava3.subjects.PublishSubject;
 
 public class ContactListViewModel extends ViewModel {
     private MutableLiveData<List<Contact>> contactListLiveData;
-    private MutableLiveData<List<Contact>> filteredContactListLiveData;
+    private List<Contact> allContactsList;
 
     // Variable for hiding and showing the loading spinner
     private MutableLiveData<Boolean> loading;
@@ -47,9 +47,9 @@ public class ContactListViewModel extends ViewModel {
 
     private void init() {
         contactListLiveData = new MutableLiveData<>();
-        filteredContactListLiveData = new MutableLiveData<>();
         loading = new MutableLiveData<>();
         currentSearchTextLiveData = new MutableLiveData<>("");
+        allContactsList = new ArrayList<>();
 
         disposables = new CompositeDisposable();
         selectedFilter = FilterType.ALL;
@@ -57,10 +57,6 @@ public class ContactListViewModel extends ViewModel {
     }
     public MutableLiveData<List<Contact>> getContactListLiveData() {
         return contactListLiveData;
-    }
-
-    public MutableLiveData<List<Contact>> getFilteredContactListLiveData() {
-        return filteredContactListLiveData;
     }
 
     public MutableLiveData<Boolean> getLoading() {
@@ -95,6 +91,7 @@ public class ContactListViewModel extends ViewModel {
                     public void onNext(@NonNull List<Contact> contacts) {
                         loading.setValue(false);
                         contactListLiveData.setValue(contacts);
+                        allContactsList=contacts;
                     }
 
                     @Override
@@ -115,8 +112,11 @@ public class ContactListViewModel extends ViewModel {
             //TODO: FILTER
 
             case FILTER_LIST: {
-                if(object instanceof FilterType)
-                  selectedFilter = (FilterType) object;
+                if(object instanceof FilterType) {
+                    selectedFilter = (FilterType) object;
+                    if(selectedFilter==FilterType.ALL)
+                        currentSearchTextLiveData.setValue("");
+                }
                 else if(object instanceof SortType)
                     selectedSort = (SortType)object;
                 filterList();
@@ -125,10 +125,7 @@ public class ContactListViewModel extends ViewModel {
             case SEARCH: {
                 String searchQuery=(String)object;
                 searchMenuItems(searchQuery.toLowerCase());
-                if(filteredContactListLiveData.getValue()!=null) {
-                    if(filteredContactListLiveData.getValue().isEmpty())
-                        loading.setValue(false);
-                }
+                filterList();
                 break;
             }
         }
@@ -136,19 +133,18 @@ public class ContactListViewModel extends ViewModel {
 
     private void filterList() {
         List<Contact> filteredMenuItems;
-        if (contactListLiveData.getValue() == null)
+        if (allContactsList.isEmpty())
             return;
-        else if (filteredContactListLiveData.getValue() == null)
+        else if (contactListLiveData.getValue() == null)
             filteredMenuItems = contactListLiveData.getValue();
         else
-            filteredMenuItems = filteredContactListLiveData.getValue();
+            filteredMenuItems = contactListLiveData.getValue();
 
         filterCases(filteredMenuItems);
     }
     private void filterCases(List<Contact> filteredContacts) {
         switch (selectedFilter) {
             case ALL:
-                currentSearchTextLiveData.setValue("");
                 filteredContacts =contactListLiveData.getValue();
                 break;
 
@@ -178,7 +174,7 @@ public class ContactListViewModel extends ViewModel {
                 break;
 
         }
-        filteredContactListLiveData.setValue(filteredContacts);
+        contactListLiveData.setValue(filteredContacts);
 
     }
     public void disposeComposite() {
@@ -189,13 +185,13 @@ public class ContactListViewModel extends ViewModel {
     public void searchMenuItems(String searchQuery) {
         currentSearchTextLiveData.setValue(searchQuery);
         List<Contact> filteredMenuItems = new ArrayList<>();
-        if (contactListLiveData.getValue() != null) {
-            for (Contact menuItem : contactListLiveData.getValue()) {
+        if (!allContactsList.isEmpty()) {
+            for (Contact menuItem : allContactsList) {
                 if (menuItem.getFullName().toLowerCase().contains(searchQuery)) {
                     filteredMenuItems.add(menuItem);
                 }
             }
-            filteredContactListLiveData.setValue(filteredMenuItems);
+            contactListLiveData.setValue(filteredMenuItems);
         }
     }
 }

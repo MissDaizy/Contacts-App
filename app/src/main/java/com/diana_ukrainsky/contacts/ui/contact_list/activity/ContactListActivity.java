@@ -78,12 +78,6 @@ public class ContactListActivity extends AppCompatActivity implements LifecycleO
                 contactListAdapter.updateRecipeListItems(contacts);
             }
         });
-        contactListViewModel.getFilteredContactListLiveData().observe(this, new Observer<List<Contact>>() {
-            @Override
-            public void onChanged(List<Contact> filteredContacts) {
-                contactListAdapter.updateRecipeListItems(filteredContacts);
-            }
-        });
         contactListViewModel.getCurrentSearchTextLiveData().observe(this, new Observer<String>() {
             @Override
             public void onChanged(String searchText) {
@@ -112,43 +106,31 @@ public class ContactListActivity extends AppCompatActivity implements LifecycleO
     private void setListeners() {
         setRadioButtonsListener();
         setRadioButtonsSortParameterListener();
-        activityContactListBinding.activityContactListSVSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                contactListViewModel.onEventMenuItemList(ContactListEvent.SEARCH, newText);
-                return true;
-            }
-        });
-
+        setSearchViewListener();
     }
 
     private void setRadioButtonsSortParameterListener() {
         activityContactListBinding.radiogroupSortParameter.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-// Handle the change in the radio button state
+                // Handle the change in the radio button state
                 switch (checkedId) {
                     case R.id.radio_all:
-                        // Sort the list of movies in ascending order
+                        // Sort the list of items in ascending order
                         contactListViewModel.onEventMenuItemList(ContactListEvent.FILTER_LIST, FilterType.ALL);
 
                         break;
                     case R.id.radio_id:
-                        // Sort the list of movies in descending order
+                        // Sort the list of items in descending order
                         contactListViewModel.onEventMenuItemList(ContactListEvent.FILTER_LIST, FilterType.ID);
                         break;
                     case R.id.radio_name:
-                        // Sort the list of movies in descending order
+                        // Sort the list of items in descending order
                         contactListViewModel.onEventMenuItemList(ContactListEvent.FILTER_LIST, FilterType.NAME);
 
                         break;
                     case R.id.radio_Age:
-                        // Sort the list of movies in descending order
+                        // Sort the list of items in descending order
                         contactListViewModel.onEventMenuItemList(ContactListEvent.FILTER_LIST, FilterType.AGE);
                         break;
                 }
@@ -163,13 +145,13 @@ public class ContactListActivity extends AppCompatActivity implements LifecycleO
 // Handle the change in the radio button state
                 switch (checkedId) {
                     case R.id.radio_ascending:
-                        // Sort the list of movies in ascending order
+                        // Sort the list of items in ascending order
                         contactListViewModel.onEventMenuItemList(ContactListEvent.FILTER_LIST, SortType.ASC);
 
 
                         break;
                     case R.id.radio_descending:
-                        // Sort the list of movies in descending order
+                        // Sort the list of items in descending order
                         contactListViewModel.onEventMenuItemList(ContactListEvent.FILTER_LIST, SortType.DESC);
 
                         break;
@@ -177,6 +159,21 @@ public class ContactListActivity extends AppCompatActivity implements LifecycleO
             }
         });
 
+    }
+
+    private void setSearchViewListener() {
+        activityContactListBinding.activityContactListSVSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                contactListViewModel.onEventMenuItemList(ContactListEvent.SEARCH, newText);
+                return true;
+            }
+        });
     }
 
 
